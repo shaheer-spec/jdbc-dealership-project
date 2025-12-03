@@ -62,7 +62,7 @@ public class VehicleDao {
              PreparedStatement preparedStatement = connection.prepareStatement(byPriceQuery)){
 
             preparedStatement.setDouble(1, minPrice);
-            preparedStatement.setDouble(1, maxPrice);
+            preparedStatement.setDouble(2, maxPrice);
             try (ResultSet resultSet = preparedStatement.executeQuery()){
                 if (resultSet.next()){
                     do {
@@ -70,7 +70,7 @@ public class VehicleDao {
                         String make = resultSet.getString("make");
                         String model = resultSet.getString("model");
                         int year = resultSet.getInt("year");
-                        Boolean sold = resultSet.getBoolean("sold");
+                        boolean sold = resultSet.getBoolean("sold");
                         String color = resultSet.getString("color");
                         String type = resultSet.getString("vehicleType");
                         int odometer = resultSet.getInt("odometer");
@@ -106,7 +106,7 @@ public class VehicleDao {
             PreparedStatement preparedStatement = connection.prepareStatement(vehicleMakeQuery)){
 
             preparedStatement.setString(1, make);
-            preparedStatement.setString(1, model);
+            preparedStatement.setString(2, model);
             try(ResultSet resultSet = preparedStatement.executeQuery()){
                 if (resultSet.next()){
                     do {
@@ -114,7 +114,7 @@ public class VehicleDao {
                         String makeVehicle = resultSet.getString("make");
                         String modelVehicle = resultSet.getString("model");
                         int year = resultSet.getInt("year");
-                        Boolean sold = resultSet.getBoolean("sold");
+                        boolean sold = resultSet.getBoolean("sold");
                         String color = resultSet.getString("color");
                         String type = resultSet.getString("vehicleType");
                         int odometer = resultSet.getInt("odometer");
@@ -132,29 +132,170 @@ public class VehicleDao {
             System.err.println("An error has occurred!");
             ex.printStackTrace();
         }
-
-
         return vehicleByMakeModel;
     }
 
     public List<Vehicle> searchByYearRange(int minYear, int maxYear) {
-        // TODO: Implement the logic to search vehicles by year range
-        return new ArrayList<>();
+        List<Vehicle> vehicleByYearRange = new ArrayList<>();
+        String vehicleYearQuery = """
+                Select *
+                From vehicles
+                where year > ?
+                and year < ?""";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(vehicleYearQuery)){
+
+            preparedStatement.setInt(1, minYear);
+            preparedStatement.setInt(2, maxYear);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()){
+                    do {
+                        String vin = resultSet.getString("Vin");
+                        String makeVehicle = resultSet.getString("make");
+                        String modelVehicle = resultSet.getString("model");
+                        int year = resultSet.getInt("year");
+                        boolean sold = resultSet.getBoolean("sold");
+                        String color = resultSet.getString("color");
+                        String type = resultSet.getString("vehicleType");
+                        int odometer = resultSet.getInt("odometer");
+                        double price = resultSet.getDouble("price");
+
+
+                        vehicleByYearRange.add(new Vehicle(vin, makeVehicle, modelVehicle, year, sold, color, type, odometer, price));
+                    }while (resultSet.next());
+                } else {
+                    System.out.println("No vehicle found");
+                }
+            }
+
+        } catch (Exception ex) {
+            System.err.println("An error has occurred!");
+            ex.printStackTrace();
+        }
+        return vehicleByYearRange;
     }
 
     public List<Vehicle> searchByColor(String color) {
-        // TODO: Implement the logic to search vehicles by color
-        return new ArrayList<>();
+        List<Vehicle> vehicleByColor = new ArrayList<>();
+        String vehicleColorQuery = """
+                Select *
+                From vehicles
+                where color = ?""";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(vehicleColorQuery)){
+
+            preparedStatement.setString(1, color);
+
+            try(ResultSet resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()){
+                    do {
+                        String vin = resultSet.getString("Vin");
+                        String makeVehicle = resultSet.getString("make");
+                        String modelVehicle = resultSet.getString("model");
+                        int year = resultSet.getInt("year");
+                        boolean sold = resultSet.getBoolean("sold");
+                        String colorVehicle = resultSet.getString("color");
+                        String type = resultSet.getString("vehicleType");
+                        int odometer = resultSet.getInt("odometer");
+                        double price = resultSet.getDouble("price");
+
+
+                        vehicleByColor.add(new Vehicle(vin, makeVehicle, modelVehicle, year, sold, colorVehicle, type, odometer, price));
+                    }while (resultSet.next());
+                } else {
+                    System.out.println("No vehicle found");
+                }
+            }
+        } catch (Exception ex) {
+            System.err.println("An error has occurred!");
+            ex.printStackTrace();
+        }
+        return vehicleByColor;
     }
 
     public List<Vehicle> searchByMileageRange(int minMileage, int maxMileage) {
-        // TODO: Implement the logic to search vehicles by mileage range
-        return new ArrayList<>();
+        List<Vehicle> vehicleByMileage = new ArrayList<>();
+        String vehicleMileageQuery = """
+                Select *
+                From vehicles
+                where odometer > ?
+                and odometer < ?""";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(vehicleMileageQuery)){
+
+            preparedStatement.setInt(1, minMileage);
+            preparedStatement.setInt(2, maxMileage);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()){
+                    do {
+                        String vin = resultSet.getString("Vin");
+                        String makeVehicle = resultSet.getString("make");
+                        String modelVehicle = resultSet.getString("model");
+                        int year = resultSet.getInt("year");
+                        boolean sold = resultSet.getBoolean("sold");
+                        String colorVehicle = resultSet.getString("color");
+                        String type = resultSet.getString("vehicleType");
+                        int odometer = resultSet.getInt("odometer");
+                        double price = resultSet.getDouble("price");
+
+
+                        vehicleByMileage.add(new Vehicle(vin, makeVehicle, modelVehicle, year, sold, colorVehicle, type, odometer, price));
+                    }while (resultSet.next());
+                } else {
+                    System.out.println("No vehicle found");
+                }
+            }
+        } catch (Exception ex) {
+            System.err.println("An error has occurred!");
+            ex.printStackTrace();
+        }
+        return vehicleByMileage;
     }
 
     public List<Vehicle> searchByType(String type) {
-        // TODO: Implement the logic to search vehicles by type
-        return new ArrayList<>();
+        List<Vehicle> vehicleByType = new ArrayList<>();
+        String vehicleTypeQuery = """
+                Select *
+                From vehicles
+                where vehicleType = ?""";
+
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(vehicleTypeQuery)){
+
+            preparedStatement.setString(1, type);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()){
+                    do {
+                        String vin = resultSet.getString("Vin");
+                        String makeVehicle = resultSet.getString("make");
+                        String modelVehicle = resultSet.getString("model");
+                        int year = resultSet.getInt("year");
+                        boolean sold = resultSet.getBoolean("sold");
+                        String colorVehicle = resultSet.getString("color");
+                        String typeVehicle = resultSet.getString("vehicleType");
+                        int odometer = resultSet.getInt("odometer");
+                        double price = resultSet.getDouble("price");
+
+
+                        vehicleByType.add(new Vehicle(vin, makeVehicle, modelVehicle, year, sold, colorVehicle, typeVehicle, odometer, price));
+                    }while (resultSet.next());
+                } else {
+                    System.out.println("No vehicle found");
+                }
+            }
+
+        } catch (Exception ex) {
+            System.err.println("An error has occurred!");
+            ex.printStackTrace();
+        }
+
+        return vehicleByType;
     }
 
     private Vehicle createVehicleFromResultSet(ResultSet resultSet) throws SQLException {
