@@ -28,8 +28,7 @@ public class VehicleDao {
             preparedStatement.setInt(8, vehicle.getOdometer());
             preparedStatement.setDouble(9, vehicle.getPrice());
 
-            int rows = preparedStatement.executeUpdate();
-            System.out.println("Rows Inserted: " + rows);
+            preparedStatement.executeUpdate();
 
         }catch (Exception ex) {
             ex.printStackTrace();

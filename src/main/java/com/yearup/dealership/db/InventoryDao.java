@@ -33,8 +33,7 @@ public class InventoryDao {
                      "DELETE FROM Inventory WHERE vin = ?")){
             preparedStatement.setString(1, vin);
 
-            int rows = preparedStatement.executeUpdate();
-            System.out.println("Rows Deleted: " + rows);
+            preparedStatement.executeUpdate();
 
         }  catch (Exception ex) {
             ex.printStackTrace();
