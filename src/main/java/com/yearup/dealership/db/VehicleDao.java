@@ -94,8 +94,47 @@ public class VehicleDao {
     }
 
     public List<Vehicle> searchByMakeModel(String make, String model) {
+        List<Vehicle> vehicleByMakeModel = new ArrayList<>();
+        String vehicleMakeQuery = """
+                Select *
+                From vehicles
+                where make = ?
+                and model = ?
+                """;
 
-        return new ArrayList<>();
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(vehicleMakeQuery)){
+
+            preparedStatement.setString(1, make);
+            preparedStatement.setString(1, model);
+            try(ResultSet resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()){
+                    do {
+                        String vin = resultSet.getString("Vin");
+                        String makeVehicle = resultSet.getString("make");
+                        String modelVehicle = resultSet.getString("model");
+                        int year = resultSet.getInt("year");
+                        Boolean sold = resultSet.getBoolean("sold");
+                        String color = resultSet.getString("color");
+                        String type = resultSet.getString("vehicleType");
+                        int odometer = resultSet.getInt("odometer");
+                        double price = resultSet.getDouble("price");
+
+
+                        vehicleByMakeModel.add(new Vehicle(vin, makeVehicle, modelVehicle, year, sold, color, type, odometer, price));
+                    }while (resultSet.next());
+                } else {
+                    System.out.println("No vehicle found");
+                }
+            }
+
+        } catch (Exception ex) {
+            System.err.println("An error has occurred!");
+            ex.printStackTrace();
+        }
+
+
+        return vehicleByMakeModel;
     }
 
     public List<Vehicle> searchByYearRange(int minYear, int maxYear) {
