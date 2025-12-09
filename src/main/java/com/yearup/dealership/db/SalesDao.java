@@ -4,7 +4,6 @@ import com.yearup.dealership.models.SalesContract;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.sql.SQLException;
 
 public class SalesDao {
     private DataSource dataSource;
